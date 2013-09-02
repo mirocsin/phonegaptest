@@ -22,7 +22,7 @@ package com.coolappz;
 import android.os.Bundle;
 import org.apache.cordova.*;
 
-public class HTML5Application extends DroidGap
+public class TodoList extends DroidGap
 {
     @Override
     public void onCreate(Bundle savedInstanceState)
