@@ -1,105 +1,155 @@
 ﻿<!DOCTYPE html>
 <html>
-<head>
-    <meta charset="utf-8">
-    <title>phonegap & jquery mobile boilerplate</title>
+    <head>
+        <meta charset="utf-8">
+        <title>phonegap & jquery mobile boilerplate</title>
 
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no;" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no;" />
 
-    <link rel="stylesheet" href="css/jquery.mobile.structure.css" />
-    <link rel="stylesheet" href="css/jquery.mobile.theme.css" />
+        <link rel="stylesheet" href="css/jquery.mobile.structure.css" />
+        <link rel="stylesheet" href="css/jquery.mobile.theme.css" />
 
 
-    <script src="cordova.js"></script>
-    <script src="js/lib/jquery.js"></script>
-    <!-- your scripts here -->
-    <script src="js/app/app.js"></script>
-    <!--<script src="js/app/bootstrap.js"></script> -->
-    <script src="js/lib/jquery.mobile.js"></script>
+        <script src="cordova.js"></script>
+        <script src="js/lib/jquery.js"></script>
+        <!-- your scripts here -->
+        <script src="js/app/app.js"></script>
+        <!--<script src="js/app/bootstrap.js"></script> -->
+        <script src="js/lib/jquery.mobile.js"></script>
 
-</head>
-<body>
-   
-    <!-- Promotions -->
-    <div data-role="page" id="promotion" data-theme="a">
-        <div data-role="header">
-        </div>
-        <div data-role="content" data-theme="">
-            Promotions here....
-        </div>
-        <div data-role="footer" data-position="fixed" data-id="TestPersist">
-            <div data-theme="" data-role="navbar" data-iconpos="top">
-                <ul>
-                    <li><a href="#promotion" id="navbar_promotions" data-theme="" data-icon="gear" class="navlink ui-btn-active ui-state-persist">Promotions </a></li>
-                    <li><a href="#package_sales" id="navbar_packagesales" data-theme="" data-icon="star"
-                        class="navlink">Package Sales </a></li>
-                    <li><a href="#sales_report" id="navbar_salesreport" data-theme="" data-icon="grid"
-                        class="navlink">Sales Reports</a></li>
-                </ul>
-            </div>
-        </div>
-    </div>
-    <!-- Package Sales -->
-    <div data-role="page" id="package_sales" data-theme="a">
-        <div data-role="header">
-        </div>
-        <div data-role="content" data-theme="">
-            Package Sales
-        </div>
-        <div data-role="footer" data-position="fixed" data-id="TestPersist">
-            <div data-theme="" data-role="navbar" data-iconpos="top">
-                <ul>
-                    <li><a href="#promotion" id="A1" data-theme="" data-icon="gear" class="navlink">Promotions
-                    </a></li>
-                    <li><a href="#package_sales" id="A2" data-theme="" data-icon="star" class="navlink ui-btn-active ui-state-persist">Package Sales </a></li>
-                    <li><a href="#sales_report" id="A3" data-theme="" data-icon="grid" class="navlink">Sales
-                        Reports</a></li>
-                </ul>
-            </div>
-        </div>
-    </div>
-    <!-- Sales Report -->
-    <div data-role="page" id="sales_report" data-theme="a">
-        <div data-role="header">
-        </div>
-        <div data-role="content" data-theme="">
-            <div data-role="fieldcontain">
-                <label for="fdate">
-                    From:
-                </label>
-                <input  id="fdate" type="date" runat="server"></asp:textbox>
-            </div>
-            <div data-role="fieldcontain">
-                <label for="tdate">
-                    To:
-                </label>
-                <input id="tdate" type="date" runat="server"></asp:textbox>
-            </div>
-            <div data-role="fieldcontain">
-                <a href="#" data-role="button" id="btnView" data-theme="b">View</a>
-            </div>
-            <div data-role="fieldcontain">
-                <ul id="search_list" data-role="listview">
-                </ul>
-            </div>
-        </div>
-        <div data-role="footer" data-position="fixed" data-id="TestPersist">
-            <div data-theme="" data-role="navbar" data-iconpos="top">
-                <ul>
-                    <li><a href="#promotion" id="A4" data-theme="" data-icon="gear" class="navlink">Promotions
-                    </a></li>
-                    <li><a href="#package_sales" id="A5" data-theme="" data-icon="star" class="navlink">Package Sales </a></li>
-                    <li><a href="#sales_report" id="A6" data-theme="" data-icon="grid" class="navlink ui-btn-active ui-state-persist">Sales Reports</a></li>
-                </ul>
-            </div>
-        </div>
-        <table style="width: 100%">
-            <tr>
-                <td style="width: 50%"></td>
-                <td style="width: 50%; color: Yellow"></td>
-            </tr>
-        </table>
-    </div>
+        <script>
+            $().ready(function() {
+                $("#btnView").on("click", function() {
+                    var fdate1 = document.getElementById('fdate').value;
+                    var tdate1 = document.getElementById('tdate').value;
+                    $('#search_list').empty();
+                    $.ajax(
+                            {
+                                beforeSend: function() {
+                                    $.mobile.showPageLoadingMsg();
+                                }, //Show spinner
+                                complete: function() {
+                                    $.mobile.hidePageLoadingMsg()
+                                }, //Hide spinner
+                                type: "GET",
+                                url: "http://nkftp.dyndns.org:8080/NKAdminUtil/Service.asmx/GetSalesReport",
+                                data: {FromDate: fdate1, ToDate: tdate1},
+                                dataType: "json",
+                                success: function(data) {
+                                    $.each(data, function(index) {
+                                        if (data[index].Location == 'TOTAL SALES') {
+                                            $('#search_list').append('<li><table style="width:100%">' +
+                                                    '<tr>' +
+                                                    '<td style="width:33%; color:Yellow">' + data[index].Location + '</td>' +
+                                                    '<td style="width:33%; text-align:right; color:Yellow">' + data[index].Sales + '</td>' +
+                                                    '</tr></table></li>');
+                                        }
+                                        else {
+                                            $('#search_list').append('<li><table style="width:100%">' +
+                                                    '<tr>' +
+                                                    '<td style="width:33%;color:White">' + data[index].Location + '</td>' +
+                                                    '<td style="width:33%; text-align:right;color:White">' + data[index].Sales + '</td>' +
+                                                    '</tr></table></li>');
+                                        }
 
-</body>
+                                    });
+                                    $('#search_list').listview('refresh');
+                                },
+                                error: function(jqXHR, textStatus, errorThrown) {
+                                    alert(textStatus);
+                                }
+
+                            });
+
+                });
+            });
+
+
+
+        </script>
+    </head>
+    <body>
+
+        <!-- Promotions -->
+        <div data-role="page" id="promotion" data-theme="a">
+            <div data-role="header">
+            </div>
+            <div data-role="content" data-theme="">
+                Promotions here....
+            </div>
+            <div data-role="footer" data-position="fixed" data-id="TestPersist">
+                <div data-theme="" data-role="navbar" data-iconpos="top">
+                    <ul>
+                        <li><a href="#promotion" id="navbar_promotions" data-theme="" data-icon="gear" class="navlink ui-btn-active ui-state-persist">Promotions </a></li>
+                        <li><a href="#package_sales" id="navbar_packagesales" data-theme="" data-icon="star"
+                               class="navlink">Package Sales </a></li>
+                        <li><a href="#sales_report" id="navbar_salesreport" data-theme="" data-icon="grid"
+                               class="navlink">Sales Reports</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <!-- Package Sales -->
+        <div data-role="page" id="package_sales" data-theme="a">
+            <div data-role="header">
+            </div>
+            <div data-role="content" data-theme="">
+                Package Sales
+            </div>
+            <div data-role="footer" data-position="fixed" data-id="TestPersist">
+                <div data-theme="" data-role="navbar" data-iconpos="top">
+                    <ul>
+                        <li><a href="#promotion" id="A1" data-theme="" data-icon="gear" class="navlink">Promotions
+                            </a></li>
+                        <li><a href="#package_sales" id="A2" data-theme="" data-icon="star" class="navlink ui-btn-active ui-state-persist">Package Sales </a></li>
+                        <li><a href="#sales_report" id="A3" data-theme="" data-icon="grid" class="navlink">Sales
+                                Reports</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <!-- Sales Report -->
+        <div data-role="page" id="sales_report" data-theme="a">
+            <div data-role="header">
+            </div>
+            <div data-role="content" data-theme="">
+                <div data-role="fieldcontain">
+                    <label for="fdate">
+                        From:
+                    </label>
+                    <input  id="fdate" type="date" runat="server"></asp:textbox>
+                </div>
+                <div data-role="fieldcontain">
+                    <label for="tdate">
+                        To:
+                    </label>
+                    <input id="tdate" type="date" runat="server"></asp:textbox>
+                </div>
+                <div data-role="fieldcontain">
+                    <a href="#" data-role="button" id="btnView" data-theme="b">View</a>
+                </div>
+                <div data-role="fieldcontain">
+                    <ul id="search_list" data-role="listview">
+                    </ul>
+                </div>
+            </div>
+            <div data-role="footer" data-position="fixed" data-id="TestPersist">
+                <div data-theme="" data-role="navbar" data-iconpos="top">
+                    <ul>
+                        <li><a href="#promotion" id="A4" data-theme="" data-icon="gear" class="navlink">Promotions
+                            </a></li>
+                        <li><a href="#package_sales" id="A5" data-theme="" data-icon="star" class="navlink">Package Sales </a></li>
+                        <li><a href="#sales_report" id="A6" data-theme="" data-icon="grid" class="navlink ui-btn-active ui-state-persist">Sales Reports</a></li>
+                    </ul>
+                </div>
+            </div>
+            <table style="width: 100%">
+                <tr>
+                    <td style="width: 50%"></td>
+                    <td style="width: 50%; color: Yellow"></td>
+                </tr>
+            </table>
+        </div>
+
+    </body>
 </html>
